@@ -1,7 +1,7 @@
 # GatorSpaces
 
-SET-UP (frontend):
-IN TERMINAL:
-npx create-react-app my-firebase-app
-cd my-firebase-app
-npm start
+SET-UP (frontend): <br>
+IN TERMINAL:<br>
+npx create-react-app my-firebase-app <br>
+cd my-firebase-app <br>
+npm start <br>
