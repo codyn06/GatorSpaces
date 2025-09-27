@@ -5,8 +5,171 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Favorite Libraries</title>
     <link rel="stylesheet" href="index.css" />
+    <style>
+      .library {
+        border: 1px solid #ccc;
+        padding: 12px;
+        margin: 8px 0;
+      }
+      .status {
+        font-weight: bold;
+        padding: 4px 8px;
+        border-radius: 4px;
+      }
+      .status.Low {
+        background: #dff0d8;
+        color: #3c763d;
+      }
+      .status.Medium {
+        background: #fcf8e3;
+        color: #8a6d3b;
+      }
+      .status.High {
+        background: #f2dede;
+        color: #a94442;
+      }
+      .status.Unknown {
+        background: #eee;
+        color: #666;
+      }
+      /* Hidden by default: raw JSON/debug output */
+      #debug-json {
+        display: none;
+        white-space: pre-wrap;
+        font-family: monospace;
+        background: #fafafa;
+        padding: 8px;
+        border: 1px solid #eee;
+        max-height: 200px;
+        overflow: auto;
+      }
+    </style>
   </head>
   <body>
     <h1>Libraries</h1>
+    <button id="refresh-now" style="margin-bottom: 12px">
+      Refresh data now
+    </button>
+    <p id="last-updated" style="font-size: 0.9rem; color: #666">
+      Last updated: --
+    </p>
+    <div id="libraries"></div>
+
+    <!-- staticLibraryData must be defined by this script -->
+    <script src="library_data.js"></script>
+    <script>
+      // Render static library cards from library_data.js (defines staticLibraryData)
+      const container = document.getElementById("libraries");
+
+      function createCard(lib) {
+        const el = document.createElement("div");
+        el.className = "library";
+        el.id = `lib-${lib.id}`;
+        el.innerHTML = `
+          <h2>${lib.name}</h2>
+          <p>${lib.address}</p>
+          <p>Hours: ${lib.hours}</p>
+          <p>Map: <a href="${lib.mapUrl}" target="_blank">link</a></p>
+          <p>Status: <span class="status ${lib.baseStatus}" data-status>${lib.baseStatus}</span></p>
+          <p>Occupancy: <span data-occupancy>--</span></p>
+          <p>Capacity: <span data-capacity>--</span></p>
+        `;
+        return el;
+      }
+
+      if (!Array.isArray(staticLibraryData)) {
+        console.error("library_data.js did not define staticLibraryData");
+      } else {
+        staticLibraryData.forEach((lib) =>
+          container.appendChild(createCard(lib))
+        );
+      }
+
+      // Poll for live status JSON and update cards
+      async function fetchStatus(force = false) {
+        try {
+          // cache-busting param
+          const url = `library_status.json?ts=${Date.now()}`;
+          const res = await fetch(url, { cache: "no-store" });
+          if (!res.ok) throw new Error("No status");
+          const json = await res.json();
+          console.log("fetched library_status.json", json);
+          // Update visible timestamp if available
+          const lastEl = document.getElementById("last-updated");
+          if (lastEl)
+            lastEl.textContent =
+              "Last updated: " + (json.timestamp || new Date().toISOString());
+          const results = json.results || {};
+          for (const id in results) {
+            const card = document.getElementById("lib-" + id);
+            if (!card) continue;
+            const statusEl = card.querySelector("[data-status]");
+            const occEl = card.querySelector("[data-occupancy]");
+            const capEl = card.querySelector("[data-capacity]");
+            const info = results[id];
+            statusEl.textContent = info.status || "Unknown";
+            statusEl.className = "status " + (info.status || "Unknown");
+            occEl.textContent = info.occupancy == null ? "--" : info.occupancy;
+            capEl.textContent = info.capacity == null ? "--" : info.capacity;
+            // Update the in-memory baseStatus/occupancy/capacity so application state reflects scraped status
+            try {
+              const libItem = staticLibraryData.find((l) => l.id === id);
+              if (libItem) {
+                libItem.baseStatus = info.status || libItem.baseStatus;
+                // store numeric values in-memory
+                libItem.occupancy =
+                  info.occupancy == null ? libItem.occupancy : info.occupancy;
+                libItem.capacity =
+                  info.capacity == null ? libItem.capacity : info.capacity;
+              }
+            } catch (e) {
+              // ignore if staticLibraryData not present
+            }
+          }
+
+          // Optional debug area on page (helps verify JSON if you prefer)
+          let dbg = document.getElementById("debug-json");
+          if (!dbg) {
+            dbg = document.createElement("div");
+            dbg.id = "debug-json";
+            container.parentNode.insertBefore(dbg, container.nextSibling);
+          }
+          dbg.textContent = JSON.stringify(json, null, 2);
+        } catch (e) {
+          console.warn("Could not fetch status.json:", e);
+        }
+      }
+
+      // Fetch on load (cache-bust)
+      fetchStatus(true);
+      // Poll every 10s
+      setInterval(fetchStatus, 10000);
+
+      // Refresh when page is shown (handles bfcache/back-forward)
+      window.addEventListener("pageshow", () => fetchStatus(true));
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible") fetchStatus(true);
+      });
+
+      // Manual refresh: trigger server-side scraper (if available) then re-fetch status
+      document
+        .getElementById("refresh-now")
+        .addEventListener("click", async () => {
+          try {
+            // Try to call a local API that triggers the scraper. If it doesn't exist,
+            // fallback to just fetching the existing JSON.
+            const resp = await fetch("/api/trigger-scrape", { method: "POST" });
+            if (resp.ok) {
+              // wait for the server to run the scraper, then fetch updated JSON
+              await fetchStatus(true);
+              return;
+            }
+          } catch (e) {
+            // ignore and fallback to fetch
+          }
+          // fallback: just fetch existing JSON
+          fetchStatus(true);
+        });
+    </script>
   </body>
 </html>
