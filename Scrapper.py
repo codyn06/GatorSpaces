@@ -43,3 +43,20 @@ def color():
                 colors.append("green")
                 print(i)
     return colors
+def generate_html():
+    names, colors = colors_and_names()
+
+    html_content = "<html><body><h1>UF Library Occupancy</h1><ul>"
+
+    for name, color in zip(names, colors):
+        html_content += f'<li style="color:{color}; font-weight:bold;">{name} - {color}</li>'
+
+    html_content += "</ul></body></html>"
+
+    with open("libraries.html", "w") as f:
+        f.write(html_content)
+
+    print("HTML file generated: libraries.html")
+
+# Run the generator
+generate_html()
