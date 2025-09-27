@@ -46,5 +46,5 @@ const staticLibraryData = [
     hours: '8 AM - 10 PM (M-Th), 8 AM - 5PM (Fri), Closed (Sat), 2 PM to 10 PM (Sun)',
     mapUrl:  'https://www.google.com/maps/place/The+Architecture+%26+Fine+Arts+Library/data=!4m2!3m1!1s0x0:0xbcea4923e8ae2093?sa=X&ved=1t:2428&ictx=111',// Verified Map Link
     baseStatus: 'Low',
-},
+}
 ]
