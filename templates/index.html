@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>UF Library Occupancy</title>
+    <!-- Load CSS from Flask static folder -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='index.css') }}"
+    />
+  </head>
+  <body>
+    <h1>UF Library Occupancy Status</h1>
+    <div class="last-refresh">Last refreshed: {{ timestamp }}</div>
+
+    {% for lib in libraries %}
+    <div class="library">
+      <div class="lib-info">
+        <div class="lib-name">{{ lib.name }}</div>
+        <div class="lib-details">
+          Occupancy: {{ lib.occupancy }} / {{ lib.capacity }}
+        </div>
+        <div class="lib-details">Address: {{ lib.address }}</div>
+        <div class="lib-details">Hours: {{ lib.hours }}</div>
+        <div class="lib-details">
+          <a href="{{ lib.mapUrl }}" target="_blank">View on Map</a>
+        </div>
+      </div>
+      <div class="status {{ lib.color }}">
+        {{ (lib.ratio * 100) | round(0) }}%
+      </div>
+    </div>
+    {% endfor %}
+  </body>
+</html>
