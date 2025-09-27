@@ -21,7 +21,7 @@ const staticLibraryData = [
     address: 'Norman Hall Addition, 618 SW 12th St, Gainesville, FL 32601',
     hours: '8 AM - 10 PM (M-Th), 8 AM - 5PM (Fri), Closed (Sat), 2 PM to 10 PM (Sun)',
     mapUrl:  'https://www.google.com/maps/place/Education+Library/@29.6466447,-82.337686,17z/data=!3m1!4b1!4m6!3m5!1s0x88e8a399c03e2a91:0xff471c20c41ddf2e!8m2!3d29.6466447!4d-82.337686!16s%2Fg%2F1tk63yxd?entry=ttu&g_ep=EgoyMDI1MDkyNC4wIKXMDSoASAFQAw%3D%3D',// Verified Map Link
-    baseStatus: 'Medium',
+    baseStatus: 'Low',
 },
 {
     id: 'health',
