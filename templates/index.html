@@ -3,6 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <title>UF Library Occupancy</title>
+    <!-- Use the Flask route that serves files in templates/assets -->
+    <!-- Use absolute path to assets route so browsers can find the favicon -->
+    <!-- Use Flask static path for favicon (served from static/assets/) -->
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="{{ url_for('static', filename='assets/favicon_io/favicon.ico') }}"
+    />
+    <link
+      rel="shortcut icon"
+      href="{{ url_for('static', filename='assets/favicon_io/favicon.ico') }}"
+    />
     <!-- Load CSS from Flask static folder -->
     <link
       rel="stylesheet"
@@ -10,8 +22,10 @@
     />
   </head>
   <body>
-    <h1>UF Library Occupancy Status</h1>
-    <div class="last-refresh">Last refreshed: {{ timestamp }}</div>
+    <div class="header">
+      <h1>UF Library Occupancy Status</h1>
+      <div class="last-refresh">Last refreshed: {{ timestamp }}</div>
+    </div>
 
     {% for lib in libraries %}
     <div class="library">
@@ -25,6 +39,15 @@
         <div class="lib-details">
           <a href="{{ lib.mapUrl }}" target="_blank">View on Map</a>
         </div>
+
+        <!-- ✅ Add Check Available Rooms button for selected libraries -->
+        {% if lib.id in ['marston', 'health', 'education', 'libwest'] %}
+        <div class="lib-details" style="margin-top: 8px">
+          <a href="https://libcal.uflib.ufl.edu/allspaces">
+            <button class="rooms-button" href="">Check Available Rooms</button>
+          </a>
+        </div>
+        {% endif %}
       </div>
       <div class="status {{ lib.color }}">
         {{ (lib.ratio * 100) | round(0) }}%
