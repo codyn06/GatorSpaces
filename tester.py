@@ -3,9 +3,7 @@ from datetime import datetime
 import re
 from playwright.sync_api import sync_playwright
 
-import time
 from time import localtime
-import datetime
 import math
 
 app = Flask(__name__)
