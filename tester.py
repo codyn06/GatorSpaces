@@ -2,7 +2,7 @@ from flask import Flask, render_template
 from datetime import datetime
 import re
 from playwright.sync_api import sync_playwright
-
+from flask import Flask, render_template, redirect
 from time import localtime
 import math
 
@@ -102,6 +102,45 @@ def occupancy():
     return URL
 '''
 
+def build_libcal_url(lib_code):
+    # Education: EDU
+    # Health Science: HSCL
+    # Lib West: LW
+    # Marston: MSL
+
+    cd = datetime.now()
+    year, month, day, hour, minute = cd.year, cd.month, cd.day, cd.hour, cd.minute
+    min = int(math.ceil(minute / 30)) * 30
+    if min == 60:
+        min = 0
+        hour += 1
+
+    end_hour = hour + 1
+    end_min = min + 30
+    if end_min == 60:
+        end_min = 0
+
+    URL = (
+        f"https://libcal.uflib.ufl.edu/r/search/{lib_code}"
+        f"?m=t&gid=0&capacity=0"
+        f"&date={year}-{month}-{day}&date-end={year}-{month}-{day}"
+        f"&start={hour}%3A{min}&end={end_hour}%3A{end_min}"
+    )
+    return URL
+
+@app.route("/check-rooms/<lib_id>")
+def check_rooms(lib_id):
+    mapping = {
+        "education": "EDU",
+        "health": "HSCL",
+        "libwest": "LW",
+        "marston": "MSL",
+    }
+    if lib_id in mapping:
+        url = build_libcal_url(mapping[lib_id])
+        return redirect(url)
+    else:
+        return f"No room-check available for {lib_id}", 404
 
 def colors_and_names():
     raw_libs = occupancy()
