@@ -69,7 +69,8 @@ h1 {
 }
 
 .rooms-button {
-  background-color: lightgrey;
+  background-color: rgb(238, 238, 238);
   border-style: solid;
-  border-width: 0;
+  border-width: 1px;
+  border-color: lightgrey;
 }
