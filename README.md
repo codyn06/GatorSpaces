@@ -54,4 +54,5 @@ python -m playwright install chromium
 Notes:
 
 - After activating the venv, run the app with: `python tester.py`.
+- After running, you will see an IP address in the console (something like http://127.0.0.1:5000). Click on this IP link to open the app in your browser.
 - Keep Playwright browser installation on systems that will actually run the scraper (server or local dev). Serverless platforms may not support large browser binaries.
