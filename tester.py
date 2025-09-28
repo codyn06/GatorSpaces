@@ -1,7 +1,11 @@
 from flask import Flask, render_template
-from datetime import datetime
+from datetime import datetime, timedelta
 import re
 from playwright.sync_api import sync_playwright
+from flask import Flask, render_template, redirect
+from time import localtime
+import math
+
 app = Flask(__name__)
 # Static library info
 staticLibraryData = [
@@ -77,6 +81,71 @@ def occupancy():
     ]
     return Libraries
 
+'''
+#When button clicked (lib_code)
+    #Education: EDU
+    #Health Science: HSCL
+    #Lib West: LW
+    #Marston: MSL
+
+    cd = datetime.now()
+    year, month, day, hour, min = cd.year,cd.month,cd.day,cd.hour,int(math.ceil(cd.minute/ 30)) * 30
+    if min==60:
+        min=0
+        hour+=1
+    end_hour = hour + 1
+    end_min = min + 30
+    if end_min == 60:
+        end_min = 0
+
+    URL = f"https://libcal.uflib.ufl.edu/r/search/{lib_code}?m=t&gid=0&capacity=0&date={year}-{month}-{day}&date-end={year}-{month}-{day}&start={hour}%3A{min}&end=21{end_hour}%3A{end_min}"
+    return URL
+'''
+
+
+def build_room_url(lib_code):
+    # Current date & time
+    cd = datetime.now()
+
+    # Round current time up to the nearest 30 minutes
+    minute_block = int(math.ceil(cd.minute / 30.0) * 30)
+    if minute_block == 60:
+        start_time = cd.replace(min=0, second=0, microsecond=0) + timedelta(hours=1)
+    else:
+        start_time = cd.replace(minute=minute_block, second=0, microsecond=0)
+
+    # End time is exactly 30 minutes after start
+    end_time = start_time + timedelta(minutes=30)
+
+    # Format date & time for URL
+    start_date = start_time.strftime("%Y-%m-%d")
+    end_date = end_time.strftime("%Y-%m-%d")
+
+    start_str = start_time.strftime("%H%%3A%M")   # URL encoding for colon
+    end_str = end_time.strftime("%H%%3A%M")
+
+    # Build URL
+    url = (
+        f"https://libcal.uflib.ufl.edu/r/search/{lib_code}"
+        f"?m=t&gid=0&capacity=0"
+        f"&date={start_date}&date-end={end_date}"
+        f"&start={start_str}&end={end_str}"
+    )
+    return url
+
+@app.route("/check-rooms/<lib_id>")
+def check_rooms(lib_id):
+    mapping = {
+        "education": "EDU",
+        "health": "HSCL",
+        "libwest": "LW",
+        "marston": "MSL",
+    }
+    if lib_id in mapping:
+        url = build_room_url(mapping[lib_id])
+        return redirect(url)
+    else:
+        return f"No room-check available for {lib_id}", 404
 
 def colors_and_names():
     raw_libs = occupancy()
@@ -121,7 +190,6 @@ def colors_and_names():
         })
 
     return sorted(libraries, key=lambda x: x["ratio"], reverse=True)
-
 
 @app.route("/")
 def home():

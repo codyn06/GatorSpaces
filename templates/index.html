@@ -43,7 +43,7 @@
         <!-- ✅ Add Check Available Rooms button for selected libraries -->
         {% if lib.id in ['marston', 'health', 'education', 'libwest'] %}
         <div class="lib-details" style="margin-top: 8px">
-          <a href="https://libcal.uflib.ufl.edu/allspaces">
+          <a href="/check-rooms/{{ lib.id }}">
             <button class="rooms-button" href="">Check Available Rooms</button>
           </a>
         </div>
