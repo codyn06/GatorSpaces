@@ -1,5 +1,14 @@
 # GatorSpaces
 
+## Clone the Repository
+
+First, clone the repository from GitHub:
+
+```powershell
+git clone https://github.com/codyn06/GatorSpaces.git
+cd GatorSpaces
+```
+
 ## Setup (Python virtual environment)
 
 These steps create and activate a Python virtual environment, install required packages, and install Playwright browsers. The examples assume PowerShell on Windows; Unix/macOS shells are noted as well.
