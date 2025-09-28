@@ -79,6 +79,7 @@ def occupancy():
     return Libraries
 
 
+
 def colors_and_names():
     raw_libs = occupancy()
     libraries = []
@@ -123,6 +124,23 @@ def colors_and_names():
 
     return sorted(libraries, key=lambda x: x["ratio"], reverse=True)
 
+
+#Specific Library Rooms Availability
+def rooms(URL):
+    with sync_playwright() as pw:
+        browser = pw.chromium.launch(headless=True)
+        page = browser.new_page()
+        page.goto(URL, wait_until="networkidle")
+        page.wait_for_timeout(5000)
+        rendered_text = page.inner_text("body")
+        browser.close()
+
+
+    Availability = rendered_text[rendered_text.index("Library West"):rendered_text.index("Marston")]
+
+
+#Button Call Function
+    #Button tied to specific URl to call rooms(URL)
 
 @app.route("/")
 def home():
