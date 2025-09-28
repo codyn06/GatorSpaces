@@ -5,7 +5,7 @@
 First, clone the repository from GitHub:
 
 ```powershell
-git clone https://github.com/codyn06/GatorSpaces.git
+git clone https://github.com/codyn06/GatorSpaces
 cd GatorSpaces
 ```
 
