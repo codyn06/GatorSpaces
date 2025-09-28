@@ -1,7 +1,5 @@
-from flask import Flask, render_template, send_from_directory
+from flask import Flask, render_template
 from datetime import datetime
-import os
-from playwright.sync_api import sync_playwright
 import re
 from playwright.sync_api import sync_playwright
 app = Flask(__name__)
@@ -130,33 +128,6 @@ def home():
     libraries = colors_and_names()
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     return render_template("index.html", libraries=libraries, timestamp=timestamp)
-
-@app.route('/assets/<path:filename>')
-def templates_assets(filename):
-    """Serve files placed under templates/assets/ at /assets/<path>
-
-    This keeps your existing template links like "assets/favicon_io/favicon.ico"
-    working without moving files into static/.
-    """
-    assets_dir = os.path.join(app.root_path, 'templates', 'assets')
-    return send_from_directory(assets_dir, filename)
-
-@app.route('/favicon.ico')
-def favicon_root():
-    """Serve a site-root favicon so browsers that request /favicon.ico get one."""
-    # prefer the favicon.ico inside templates/assets/favicon_io if present
-    ico_path = os.path.join(app.root_path, 'templates', 'assets', 'favicon_io', 'favicon.ico')
-    if os.path.exists(ico_path):
-        return send_from_directory(os.path.dirname(ico_path), os.path.basename(ico_path))
-    # fall back to any file in templates/assets
-    assets_dir = os.path.join(app.root_path, 'templates', 'assets')
-    # attempt common names
-    for name in ('favicon.ico', 'favicon-32x32.png', 'favicon-16x16.png'):
-        candidate = os.path.join(assets_dir, name)
-        if os.path.exists(candidate):
-            return send_from_directory(assets_dir, name)
-    # if nothing found, return 404
-    return ('', 404)
 
 
 if __name__ == "__main__":
