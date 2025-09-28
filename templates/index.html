@@ -3,6 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <title>UF Library Occupancy</title>
+    <!-- Use the Flask route that serves files in templates/assets -->
+    <!-- Use absolute path to assets route so browsers can find the favicon -->
+    <!-- Use Flask static path for favicon (served from static/assets/) -->
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="{{ url_for('static', filename='assets/favicon_io/favicon.ico') }}"
+    />
+    <link
+      rel="shortcut icon"
+      href="{{ url_for('static', filename='assets/favicon_io/favicon.ico') }}"
+    />
     <!-- Load CSS from Flask static folder -->
     <link
       rel="stylesheet"
