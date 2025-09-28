@@ -1,14 +1,12 @@
-# Use official Python image
+# Use official Python slim image
 FROM python:3.13-slim
 
-# Avoid prompts during package installation
+# Avoid interactive prompts during installation
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Install necessary OS dependencies for Playwright
+# Install OS dependencies for Playwright
 RUN apt-get update -q && \
-    apt-get install -y --no-install-recommends \
-    curl \
-    wget \
+    apt-get install -y -qq --no-install-recommends \
     xvfb \
     libxcomposite1 \
     libxdamage1 \
@@ -22,13 +20,17 @@ RUN apt-get update -q && \
     libxkbcommon0 \
     libatspi2.0-0 \
     libnss3 \
-    ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
+    libxfixes3 \
+    libcairo2 \
+    libpango-1.0-0 \
+    curl \
+    ffmpeg && \
+    rm -rf /var/lib/apt/lists/*
 
 # Copy Python dependencies
 COPY requirements.txt .
 
-# Install Python dependencies
+# Upgrade pip and install dependencies
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
@@ -38,11 +40,11 @@ RUN playwright install chromium
 # Copy app source code
 COPY . .
 
-# Set DISPLAY for headless/virtual framebuffer
+# Set DISPLAY for virtual framebuffer
 ENV DISPLAY=:99
 
-# Expose port (for Flask)
+# Expose Flask port
 EXPOSE 5000
 
 # Start Flask app with virtual framebuffer
-CMD Xvfb :99 -screen 0 1024x768x16 & python tester.py
+CMD ["sh", "-c", "Xvfb :99 -screen 0 1024x768x16 & python tester.py"]
