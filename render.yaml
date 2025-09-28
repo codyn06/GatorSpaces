@@ -5,4 +5,4 @@ services:
     buildCommand: |
       pip install -r requirements.txt
       playwright install --with-deps chromium
-    startCommand: gunicorn tester:app
+    startCommand: gunicorn tester:app --bind 0.0.0.0:$PORT
