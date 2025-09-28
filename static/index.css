@@ -69,8 +69,30 @@ h1 {
 }
 
 .rooms-button {
-  background-color: rgb(238, 238, 238);
-  border-style: solid;
-  border-width: 1px;
-  border-color: lightgrey;
+  background-color: #0012a5;
+  color: white;
+  border-width: 0;
+  display: inline-block;
+}
+
+.map-button {
+  background-color: #fa4616;
+  color: white;
+  border-width: 0;
+  display: inline-block;
+}
+.button-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap; /* wrap on small screens */
+}
+
+.button-row .rooms-button,
+.button-row .map-button {
+  white-space: nowrap;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: center;
 }

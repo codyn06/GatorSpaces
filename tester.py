@@ -110,7 +110,7 @@ def build_room_url(lib_code):
     # Round current time up to the nearest 30 minutes
     minute_block = int(math.ceil(cd.minute / 30.0) * 30)
     if minute_block == 60:
-        start_time = cd.replace(min=0, second=0, microsecond=0) + timedelta(hours=1)
+        start_time = cd.replace(minute=0, second=0, microsecond=0) + timedelta(hours=1)
     else:
         start_time = cd.replace(minute=minute_block, second=0, microsecond=0)
 

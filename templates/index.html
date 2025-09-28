@@ -36,18 +36,16 @@
         </div>
         <div class="lib-details">Address: {{ lib.address }}</div>
         <div class="lib-details">Hours: {{ lib.hours }}</div>
-        <div class="lib-details">
-          <a href="{{ lib.mapUrl }}" target="_blank">View on Map</a>
-        </div>
-
-        <!-- ✅ Add Check Available Rooms button for selected libraries -->
-        {% if lib.id in ['marston', 'health', 'education', 'libwest'] %}
-        <div class="lib-details" style="margin-top: 8px">
-          <a href="/check-rooms/{{ lib.id }}">
-            <button class="rooms-button" href="">Check Available Rooms</button>
+        <div class="lib-details button-row" style="margin-top: 8px">
+          <a href="{{ lib.mapUrl }}" target="_blank">
+            <button class="map-button">View on Map</button>
           </a>
+          {% if lib.id in ['marston', 'health', 'education', 'libwest'] %}
+          <a href="/check-rooms/{{ lib.id }}">
+            <button class="rooms-button">Check Available Rooms</button>
+          </a>
+          {% endif %}
         </div>
-        {% endif %}
       </div>
       <div class="status {{ lib.color }}">
         {{ (lib.ratio * 100) | round(0) }}%
