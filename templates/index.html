@@ -22,8 +22,10 @@
     />
   </head>
   <body>
-    <h1>UF Library Occupancy Status</h1>
-    <div class="last-refresh">Last refreshed: {{ timestamp }}</div>
+    <div class="header">
+      <h1>UF Library Occupancy Status</h1>
+      <div class="last-refresh">Last refreshed: {{ timestamp }}</div>
+    </div>
 
     {% for lib in libraries %}
     <div class="library">
