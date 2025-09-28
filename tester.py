@@ -2,6 +2,12 @@ from flask import Flask, render_template
 from datetime import datetime
 import re
 from playwright.sync_api import sync_playwright
+
+import time
+from time import localtime
+import datetime
+import math
+
 app = Flask(__name__)
 # Static library info
 staticLibraryData = [
@@ -77,6 +83,26 @@ def occupancy():
     ]
     return Libraries
 
+'''
+#When button clicked (lib_code)
+    #Education: EDU
+    #Health Science: HSCL
+    #Lib West: LW
+    #Marston: MSL
+
+    cd = datetime.now()
+    year, month, day, hour, min = cd.year,cd.month,cd.day,cd.hour,int(math.ceil(cd.minute/ 30)) * 30
+    if min==60:
+        min=0
+        hour+=1
+    end_hour = hour + 1
+    end_min = min + 30
+    if end_min == 60:
+        end_min = 0
+
+    URL = f"https://libcal.uflib.ufl.edu/r/search/{lib_code}?m=t&gid=0&capacity=0&date={year}-{month}-{day}&date-end={year}-{month}-{day}&start={hour}%3A{min}&end=21{end_hour}%3A{end_min}"
+    return URL
+'''
 
 
 def colors_and_names():
@@ -122,24 +148,6 @@ def colors_and_names():
         })
 
     return sorted(libraries, key=lambda x: x["ratio"], reverse=True)
-
-
-#Specific Library Rooms Availability
-def rooms(URL):
-    with sync_playwright() as pw:
-        browser = pw.chromium.launch(headless=True)
-        page = browser.new_page()
-        page.goto(URL, wait_until="networkidle")
-        page.wait_for_timeout(5000)
-        rendered_text = page.inner_text("body")
-        browser.close()
-
-
-    Availability = rendered_text[rendered_text.index("Library West"):rendered_text.index("Marston")]
-
-
-#Button Call Function
-    #Button tied to specific URl to call rooms(URL)
 
 @app.route("/")
 def home():
